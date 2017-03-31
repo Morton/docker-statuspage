@@ -3,7 +3,8 @@ html(lang="en" style="line-height: 1")
     head
         title Docker Logs
         link(rel='stylesheet', href='../assets/uikit.min.css', type='text/css' )
-    body(xstyle="background: Black; color: White;")
+    body
+        a(href="javascript:location.reload()" uk-icon="icon: refresh" class="uk-light" style="position: fixed; top: 8px; right: 8px; z-index: 10;")
         div(class="uk-card uk-card-default uk-card-body uk-light uk-background-secondary")
             code(class="uk-light uk-background-secondary")
                 each line in logs.split(/[\n\r][\n\r]?/)
@@ -12,3 +13,4 @@ html(lang="en" style="line-height: 1")
         script(src='../assets/jquery-3.2.0.min.js')
         script(src='../assets/uikit.min.js')
         script(src='../assets/uikit-icons.min.js')
+        script window.scrollTo(0,document.body.scrollHeight);
