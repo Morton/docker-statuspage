@@ -10,6 +10,7 @@
   "dependencies": {
     "basicauth-middleware": "^2.0.0",
     "express": "^4.14.1",
+    "moment": "^2.18.1",
     "pug": "^2.0.0-beta11"
   }
 }

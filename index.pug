@@ -9,12 +9,32 @@ html(lang="en")
             table(class="uk-table uk-table-striped uk-table-small")
                 thead
                     tr
-                        each cell in table[0]
-                            th(style="text-align: left")=cell
+                        th
+                        th(style="text-align: left") NAMES
+                        th(style="text-align: left") CONTAINER ID
+                        th(style="text-align: left") CREATED
+                        th(style="text-align: left") PORTS
                 tbody
-                    each row in table.slice(1)
+                    each container in containers
                         tr
-                            each cell in row
-                                td=cell
+                            td(class="uk-table-shrink")
+                                if container.State.Running
+                                    if container.State.Paused
+                                        span(uk-icon="icon: more" title="Paused")
+                                    else if container.State.Restarting
+                                        span(uk-icon="icon: refresh" title="Restarting")
+                                    else
+                                        span(uk-icon="icon: play" title="Running")
+                                else if container.State.RemovalInProgress
+                                    span(uk-icon="icon: trash" title="Removal In Progress")
+                                else if container.State.Dead
+                                    span(uk-icon="icon: close" title="Dead")
+                                else
+                                    span(uk-icon="icon: close" title=container.State.Status)
+                            td=container.Name.substr(1)
+                            td=container.Id.substr(0, 12)
+                            td=moment(container.Created).fromNow()
+                            td=Object.keys(container.NetworkSettings.Ports).join(', ')
+        script(src='assets/jquery-3.2.0.min.js')
         script(src='assets/uikit.min.js')
         script(src='assets/uikit-icons.min.js')
