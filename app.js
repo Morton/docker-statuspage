@@ -6,9 +6,22 @@ const moment = require('moment');
 let app = express();
 
 app.use('/assets', express.static('assets'));
+app.get('/logs/:container', (req, res) => {
+    new Promise((resolve, reject) => exec('docker logs ' + req.param('container'), (error, stdout, stderr) => {
+        if (error) {
+            reject(error);
+        } else if (stdout && stdout.trim() !== '') {
+            resolve(stdout);
+        } else {
+            reject(stderr);
+        }
+    }))
+        .then(d => res.status(200).set('Content-type', 'text/plain').send(d))
+        .catch(e => res.status(500).set('Content-type', 'text/plain').send(e.stack ? e.stack : e));
+});
+
 app.get('/*', (req, res) => {
     new Promise((resolve, reject) => exec('docker inspect $(docker ps --all -q)', (error, stdout, stderr) => {
-        // console.log('error:\n', error, '\nstdout:\n', stdout, '\nstderr:\n', stderr);
         if (error) {
             reject(error);
         } else if (stdout && stdout.trim() !== '') {

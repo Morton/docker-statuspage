@@ -1,9 +1,23 @@
+mixin statusIcon(status, ratio)
+    if status.Running
+        if status.Paused
+            span(uk-icon="icon: more; ratio: " + ratio title="Paused")
+        else if status.Restarting
+            span(uk-icon="icon: refresh; ratio: " + ratio title="Restarting")
+        else
+            span(uk-icon="icon: play; ratio: " + ratio title="Running")
+    else if status.RemovalInProgress
+        span(uk-icon="icon: trash; ratio: " + ratio title="Removal In Progress")
+    else if status.Dead
+        span(uk-icon="icon: close; ratio: " + ratio title="Dead")
+    else
+        span(uk-icon="icon: close; ratio: " + ratio title=status.Status)
+
 doctype html
 html(lang="en")
     head
         title=docker
         link(rel='stylesheet', href='assets/uikit.min.css', type='text/css' )
-        link(rel='stylesheet', href='assets/uikit-rtl.min.css', type='text/css' )
     body
         div(class="uk-container")
             table(class="uk-table uk-table-striped uk-table-small")
@@ -14,27 +28,100 @@ html(lang="en")
                         th(style="text-align: left") CONTAINER ID
                         th(style="text-align: left") CREATED
                         th(style="text-align: left") PORTS
+                        th
                 tbody
                     each container in containers
                         tr
                             td(class="uk-table-shrink")
-                                if container.State.Running
-                                    if container.State.Paused
-                                        span(uk-icon="icon: more" title="Paused")
-                                    else if container.State.Restarting
-                                        span(uk-icon="icon: refresh" title="Restarting")
-                                    else
-                                        span(uk-icon="icon: play" title="Running")
-                                else if container.State.RemovalInProgress
-                                    span(uk-icon="icon: trash" title="Removal In Progress")
-                                else if container.State.Dead
-                                    span(uk-icon="icon: close" title="Dead")
-                                else
-                                    span(uk-icon="icon: close" title=container.State.Status)
+                                +statusIcon(container.State, 1)
                             td=container.Name.substr(1)
                             td=container.Id.substr(0, 12)
                             td=moment(container.Created).fromNow()
                             td=Object.keys(container.NetworkSettings.Ports || {}).join(', ')
+                            td=Object.keys(container.NetworkSettings.Ports || {}).join(', ')
+                            td(class="uk-table-shrink")
+                                a(uk-icon="icon: info" title="more information" href="#"+container.Id uk-toggle)
+
+                                div(id=container.Id uk-modal class="uk-modal-container")
+                                    div(class="uk-modal-dialog")
+                                        button(class="uk-modal-close-default" type="button" uk-close)
+                                        div(class="uk-modal-body")
+                                            h2(class="uk-modal-title")=container.Name.substr(1)
+                                            ul(uk-accordion)
+                                                li(class="uk-open")
+                                                    h3(class="uk-accordion-title") Details
+                                                    div(class="uk-accordion-content")
+                                                        table(class="uk-table")
+                                                            tbody
+                                                                tr
+                                                                    td id
+                                                                    td=container.Id
+                                                                tr
+                                                                    td Created
+                                                                    td=moment(container.Created).format("dddd, MMMM Do YYYY, h:mm:ss a")
+                                                                tr
+                                                                    td State
+                                                                    td=container.State.Status.substr(0, 1).toUpperCase() + container.State.Status.substr(1)
+                                                                tr
+                                                                    td Image
+                                                                    td=container.Config.Image
+                                                li
+                                                    h3(class="uk-accordion-title") Environment Variables
+                                                    div(class="uk-accordion-content")
+                                                        table(class="uk-table")
+                                                            tbody
+                                                                each env in container.Config.Env
+                                                                    tr
+                                                                        td=env.split('=')[0]
+                                                                        td=env.substr(env.split('=')[0].length +1)
+                                                if container.Mounts && container.Mounts.length > 0
+                                                    li
+                                                        h3(class="uk-accordion-title") Volumes
+                                                        div(class="uk-accordion-content")
+                                                            table(class="uk-table")
+                                                                thead
+                                                                    tr
+                                                                        th path
+                                                                        th type
+                                                                        th driver
+                                                                        th host path
+                                                                tbody
+                                                                    each mount in container.Mounts
+                                                                        tr
+                                                                            td=mount.Destination
+                                                                            td=mount.Type
+                                                                            td=mount.Driver
+                                                                            td=mount.Source
+                                                if container.NetworkSettings.Ports && Object.keys(container.NetworkSettings.Ports).length > 0
+                                                    li
+                                                        h3(class="uk-accordion-title") Ports
+                                                        div(class="uk-accordion-content")
+                                                            table(class="uk-table")
+                                                                thead
+                                                                    tr
+                                                                        th container port
+                                                                        th type
+                                                                        th host port
+                                                                        th host ip
+                                                                tbody
+                                                                    each port in Object.keys(container.NetworkSettings.Ports)
+                                                                        if container.NetworkSettings.Ports[port]
+                                                                            each p in container.NetworkSettings.Ports[port]
+                                                                                tr
+                                                                                    td=port.split('/')[0]
+                                                                                    td=port.split('/')[1]
+                                                                                    td=p['HostPort']
+                                                                                    td=p['HostIp']
+                                                                        else
+                                                                            tr
+                                                                                td=port.split('/')[0]
+                                                                                td=port.split('/')[1]
+                                                                                td
+                                                                                td
+                                                li
+                                                    h3(class="uk-accordion-title") Logs
+                                                    div(class="uk-accordion-content")
+                                                        iframe(src="logs/" + container.Id style="width: 100%;")
         script(src='assets/jquery-3.2.0.min.js')
         script(src='assets/uikit.min.js')
         script(src='assets/uikit-icons.min.js')
