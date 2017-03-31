@@ -38,7 +38,6 @@ html(lang="en")
                             td=container.Id.substr(0, 12)
                             td=moment(container.Created).fromNow()
                             td=Object.keys(container.NetworkSettings.Ports || {}).join(', ')
-                            td=Object.keys(container.NetworkSettings.Ports || {}).join(', ')
                             td(class="uk-table-shrink")
                                 a(uk-icon="icon: info" title="more information" href="#"+container.Id uk-toggle)
 
