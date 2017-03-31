@@ -17,6 +17,7 @@ app.get('/logs/:container', (req, res) => {
             reject(stderr);
         }
     }))
+        .then(logs => logs.split(' ').join('&nbsp;'))
         .then(logs => ansi_up.ansi_to_html(logs))
         .then(logs => pug.renderFile('./logs.pug', {pretty: true, logs}))
         .then(d => res.status(200).set('Content-type', 'text/html').send(d))
