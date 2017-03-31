@@ -65,15 +65,16 @@ html(lang="en")
                                                                 tr
                                                                     td Image
                                                                     td=container.Config.Image
-                                                li
-                                                    h3(class="uk-accordion-title") Environment Variables
-                                                    div(class="uk-accordion-content")
-                                                        table(class="uk-table")
-                                                            tbody
-                                                                each env in container.Config.Env
-                                                                    tr
-                                                                        td=env.split('=')[0]
-                                                                        td=env.substr(env.split('=')[0].length +1)
+                                                if container.Config.Env && container.Config.Env.length > 0
+                                                    li
+                                                        h3(class="uk-accordion-title") Environment Variables
+                                                        div(class="uk-accordion-content")
+                                                            table(class="uk-table")
+                                                                tbody
+                                                                    each env in container.Config.Env
+                                                                        tr
+                                                                            td=env.split('=')[0]
+                                                                            td=env.substr(env.split('=')[0].length +1)
                                                 if container.Mounts && container.Mounts.length > 0
                                                     li
                                                         h3(class="uk-accordion-title") Volumes
