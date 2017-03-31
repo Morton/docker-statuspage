@@ -1,0 +1,14 @@
+doctype html
+html(lang="en" style="line-height: 1")
+    head
+        title Docker Logs
+        link(rel='stylesheet', href='../assets/uikit.min.css', type='text/css' )
+    body(xstyle="background: Black; color: White;")
+        div(class="uk-card uk-card-default uk-card-body uk-light uk-background-secondary")
+            code(class="uk-light uk-background-secondary")
+                each line in logs.split(/[\n\r][\n\r]?/)
+                    !=line
+                    br
+        script(src='../assets/jquery-3.2.0.min.js')
+        script(src='../assets/uikit.min.js')
+        script(src='../assets/uikit-icons.min.js')

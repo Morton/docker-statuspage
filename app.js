@@ -2,6 +2,7 @@ const exec = require('child_process').exec;
 const express = require('express');
 const pug = require('pug');
 const moment = require('moment');
+const ansi_up = require('ansi_up');
 
 let app = express();
 
@@ -16,7 +17,9 @@ app.get('/logs/:container', (req, res) => {
             reject(stderr);
         }
     }))
-        .then(d => res.status(200).set('Content-type', 'text/plain').send(d))
+        .then(logs => ansi_up.ansi_to_html(logs))
+        .then(logs => pug.renderFile('./logs.pug', {pretty: true, logs}))
+        .then(d => res.status(200).set('Content-type', 'text/html').send(d))
         .catch(e => res.status(500).set('Content-type', 'text/plain').send(e.stack ? e.stack : e));
 });
 
@@ -32,7 +35,7 @@ app.get('/*', (req, res) => {
     }))
         .then(data => JSON.parse(data))
         .then(containers => pug.renderFile('./index.pug', {pretty: true, containers, moment}))
-        .then(d => res.status(200).send(d))
+        .then(d => res.status(200).set('Content-type', 'text/html').send(d))
         .catch(e => res.status(500).set('Content-type', 'text/plain').send(e.stack ? e.stack : e));
 });
 
