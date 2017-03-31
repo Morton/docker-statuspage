@@ -1,0 +1,20 @@
+doctype html
+html(lang="en")
+    head
+        title=docker
+        link(rel='stylesheet', href='assets/uikit.min.css', type='text/css' )
+        link(rel='stylesheet', href='assets/uikit-rtl.min.css', type='text/css' )
+    body
+        div(class="uk-container")
+            table(class="uk-table uk-table-striped uk-table-small")
+                thead
+                    tr
+                        each cell in table[0]
+                            th(style="text-align: left")=cell
+                tbody
+                    each row in table.slice(1)
+                        tr
+                            each cell in row
+                                td=cell
+        script(src='assets/uikit.min.js')
+        script(src='assets/uikit-icons.min.js')

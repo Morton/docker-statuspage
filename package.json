@@ -1,0 +1,15 @@
+{
+  "name": "docker-statuspage",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Martin Heller",
+  "license": "ISC",
+  "dependencies": {
+    "basicauth-middleware": "^2.0.0",
+    "express": "^4.14.1",
+    "pug": "^2.0.0-beta11"
+  }
+}
