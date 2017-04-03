@@ -8,7 +8,7 @@ let app = express();
 
 app.use('/assets', express.static('assets'));
 app.get('/logs/:container', (req, res) => {
-    new Promise((resolve, reject) => exec('docker logs ' + req.param('container'), (error, stdout, stderr) => {
+    new Promise((resolve, reject) => exec('docker logs ' + req.param('container') + ' --tail 2560', (error, stdout, stderr) => { //2560
         if (error) {
             reject(error);
         } else if (stdout && stdout.trim() !== '') {
